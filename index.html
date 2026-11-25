@@ -19,8 +19,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@400;600&display=swap">
 <style>
 :root{
-  --bg:#FAF0D2; --surface:#FFFAEB; --ink:#3A2A1D; --muted:#76604D;
-  --line:#E6D3A8; --accent:#7A4A2B; --accent-soft:#F2E0BC; --gold:#A8732A;
+  --bg:#E9F0E1; --surface:#FAFCF5; --ink:#24301F; --muted:#5C6A55;
+  --line:#CBDABD; --accent:#3E6B47; --accent-soft:#DAE7D0; --gold:#9A6B2A;
   --display:"Spectral", Georgia, "Times New Roman", serif;
   --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
   color-scheme:light;
@@ -71,9 +71,9 @@ ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .ahead b{font-family:var(--display);font-size:1.05rem;font-weight:600}
 .ahead span{color:var(--muted)}
 .bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden}
-.bar i{display:block;height:100%;border-radius:8px;background:#9BA97A}
+.bar i{display:block;height:100%;border-radius:8px;background:#9FC08F}
 .bar.some i{background:var(--gold)}
-.bar.strong i{background:var(--accent)}
+.bar.strong i{background:#9A5B3A}
 .legend{font-size:.85rem;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:6px}
 label{font-weight:600;font-size:.95rem}
@@ -1083,7 +1083,7 @@ function makePDF(R, password){
   if(password) opts.encryption={userPassword:password,ownerPassword:password,userPermissions:["print","copy"]};
   const doc=new jsPDF(opts);
   const W=210, M=18, CW=W-2*M; let y=22;
-  const ink=[58,42,29], muted=[118,96,77], brown=[122,74,43];
+  const ink=[36,48,31], muted=[92,106,85], brown=[62,107,71];
   function room(h){ if(y+h>282){doc.addPage();y=20;} }
   function text(s,{size=11,style="normal",color=ink,gap=2,indent=0}={}){
     doc.setFont("helvetica",style); doc.setFontSize(size); doc.setTextColor(...color);
