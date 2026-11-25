@@ -77,6 +77,10 @@ input[type=password],input[type=text]{font:inherit;border:1px solid var(--line);
 .about .about-body{display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
 .about .dev-name{font-family:var(--display);font-weight:600;font-size:1.05rem}
 .clear-card{background:transparent}
+.scene{margin:-24px -20px 0;border-radius:14px 14px 0 0;overflow:hidden;line-height:0;border-bottom:1px solid var(--line)}
+.scene svg{width:100%;height:auto;display:block}
+.motif{width:60px;height:60px;flex:none}
+.chead{display:flex;align-items:center;gap:12px}
 .big{font-size:1.25rem;font-weight:600;color:var(--accent)}
 @media (prefers-reduced-motion: reduce){.fill,.opt{transition:none}}
 </style>
@@ -487,6 +491,130 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
 </script>
 <script>
+// Watercolour and sketch art, drawn as inline SVG. Shared filters live in #artdefs.
+const ARTDEFS = `<svg id="artdefs" width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <filter id="wc" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="3" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="1.1" result="b"/>
+    <feComposite in="b" in2="d" operator="over"/>
+  </filter>
+  <filter id="wc2" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="11" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="2"/>
+  </filter>
+  <filter id="sk" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="turbulence" baseFrequency="0.9" numOctaves="1" seed="5" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="paper" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="2" result="g"/>
+    <feColorMatrix in="g" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.42  0 0 0 0 0.25  0 0 0 0.09 0"/>
+    <feComposite in2="SourceGraphic" operator="in"/>
+  </filter>
+  <radialGradient id="glow"><stop offset="0" stop-color="#F6C96A" stop-opacity=".85"/><stop offset="1" stop-color="#F6C96A" stop-opacity="0"/></radialGradient>
+</defs></svg>`;
+
+const PAPER = `<rect width="320" height="180" fill="#FFF7E2"/><rect width="320" height="180" filter="url(#paper)" fill="#000"/>`;
+const L = `fill="none" stroke="#5A4130" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#sk)"`;
+
+const SCENES = {
+  // Dawn path over hills, a bird in flight
+  hero:`<svg viewBox="0 0 320 180" role="img" aria-label="Watercolour of a path over hills at dawn">${PAPER}
+    <g filter="url(#wc2)"><rect x="-10" y="-10" width="340" height="120" fill="#F4D9A0" opacity=".55"/>
+    <circle cx="228" cy="72" r="34" fill="#F2B95C" opacity=".55"/></g>
+    <circle cx="228" cy="72" r="70" fill="url(#glow)" opacity=".7"/>
+    <g filter="url(#wc)">
+      <path d="M-10 118 C40 92 90 98 130 108 C175 120 215 90 260 96 C290 100 315 108 330 112 V190 H-10Z" fill="#C7B88E" opacity=".7"/>
+      <path d="M-10 140 C50 118 110 126 160 136 C215 147 265 124 330 130 V190 H-10Z" fill="#94A672" opacity=".75"/>
+      <path d="M150 190 C150 168 175 156 190 146 C200 139 214 134 226 128 C214 138 196 150 186 162 C178 172 176 182 178 190Z" fill="#EAD7A8"/>
+    </g>
+    <path d="M-10 140 C50 118 110 126 160 136 C215 147 265 124 330 130" ${L} stroke-width="1.2" opacity=".6"/>
+    <path d="M96 48 q7 -7 14 0 q7 -7 14 0" ${L}/><path d="M140 34 q5 -5 10 0 q5 -5 10 0" ${L} stroke-width="1.2"/>
+  </svg>`,
+  // Two chairs at a table by a window
+  part1:`<svg viewBox="0 0 320 180" role="img" aria-label="Sketch of two chairs at a table by a window">${PAPER}
+    <g filter="url(#wc2)"><rect x="118" y="22" width="84" height="74" fill="#BFD0D6" opacity=".55"/>
+    <ellipse cx="160" cy="160" rx="120" ry="16" fill="#D9C08C" opacity=".55"/></g>
+    <g filter="url(#wc)"><rect x="104" y="104" width="112" height="10" fill="#B07A4E" opacity=".6"/>
+    <path d="M60 92 h26 v40 h-26z" fill="#C99A63" opacity=".45"/><path d="M234 92 h26 v40 h-26z" fill="#C99A63" opacity=".45"/>
+    <circle cx="142" cy="98" r="6" fill="#E8B07A" opacity=".7"/><circle cx="178" cy="98" r="6" fill="#9DB3B8" opacity=".7"/></g>
+    <g ${L}>
+      <rect x="118" y="22" width="84" height="74"/><path d="M160 22 v74 M118 59 h84"/>
+      <path d="M104 104 h112 M104 114 h112 M112 114 v46 M208 114 v46"/>
+      <path d="M86 66 v94 M86 118 h-30 v42 M56 118 v-6"/><path d="M234 66 v94 M234 118 h30 v42 M264 118 v-6"/>
+      <path d="M136 92 h12 l-2 12 h-8z M172 92 h12 l-2 12 h-8z"/><path d="M142 86 q2 -5 0 -9 M178 86 q2 -5 0 -9" stroke-width="1"/>
+    </g>
+  </svg>`,
+  // A clay oil lamp with a soft glow
+  part2:`<svg viewBox="0 0 320 180" role="img" aria-label="Watercolour of a small oil lamp glowing">${PAPER}
+    <circle cx="160" cy="78" r="80" fill="url(#glow)" opacity=".9"/>
+    <g filter="url(#wc)">
+      <path d="M118 126 C118 108 140 102 160 102 C186 102 206 110 214 104 C210 122 196 138 160 138 C134 138 118 134 118 126Z" fill="#B9774A" opacity=".75"/>
+      <path d="M160 96 C152 84 156 68 162 58 C166 70 172 82 164 96Z" fill="#F0A84A" opacity=".85"/>
+      <ellipse cx="160" cy="150" rx="70" ry="8" fill="#C9A874" opacity=".5"/>
+    </g>
+    <g ${L}><path d="M118 126 C118 108 140 102 160 102 C186 102 206 110 214 104 C210 122 196 138 160 138 C134 138 118 134 118 126Z"/>
+    <path d="M140 106 q20 8 40 0"/><path d="M160 96 C152 84 156 68 162 58 C166 70 172 82 164 96" stroke="#8A5A2E"/></g>
+  </svg>`,
+  // A bench under a tree
+  part3:`<svg viewBox="0 0 320 180" role="img" aria-label="Watercolour of a bench beneath a tree">${PAPER}
+    <g filter="url(#wc2)"><ellipse cx="170" cy="160" rx="140" ry="14" fill="#A9B784" opacity=".55"/></g>
+    <g filter="url(#wc)">
+      <circle cx="120" cy="62" r="40" fill="#8FA56B" opacity=".6"/><circle cx="160" cy="48" r="38" fill="#A5B97E" opacity=".55"/>
+      <circle cx="195" cy="70" r="34" fill="#7E9660" opacity=".55"/><circle cx="150" cy="84" r="30" fill="#B7C48E" opacity=".5"/>
+      <path d="M150 158 C152 130 148 112 156 96 L164 96 C160 112 166 132 166 158Z" fill="#8A6141" opacity=".7"/>
+      <rect x="196" y="128" width="70" height="7" fill="#B07A4E" opacity=".55"/>
+    </g>
+    <g ${L}><path d="M150 158 C152 130 148 112 156 96 M166 158 C166 132 160 112 164 96 M156 112 l-14 -14 M162 108 l14 -12"/>
+    <path d="M196 128 h70 M196 135 h70 M200 135 v22 M262 135 v22 M200 128 v-18 h62 v18 M200 118 h62"/></g>
+  </svg>`,
+  // Sunrise over still water with a small boat
+  result:`<svg viewBox="0 0 320 180" role="img" aria-label="Watercolour of a sunrise over still water with a small boat">${PAPER}
+    <g filter="url(#wc2)"><rect x="-10" y="-10" width="340" height="110" fill="#F3D3A2" opacity=".55"/>
+    <rect x="-10" y="100" width="340" height="90" fill="#A9C0C3" opacity=".55"/></g>
+    <circle cx="160" cy="100" r="80" fill="url(#glow)" opacity=".8"/>
+    <g filter="url(#wc)"><path d="M126 100 a34 34 0 0 1 68 0z" fill="#F0AE55" opacity=".7"/>
+    <path d="M120 112 h80 M132 122 h56 M144 132 h32" stroke="#F0AE55" stroke-width="4" opacity=".5"/>
+    <path d="M70 142 h52 l-8 10 h-36z" fill="#8A6141" opacity=".65"/></g>
+    <g ${L}><path d="M-10 100 H330" stroke-width="1" opacity=".5"/><path d="M70 142 h52 l-8 10 h-36z M96 142 v-26 l14 22"/></g>
+  </svg>`,
+  // A lighthouse on rocks
+  support:`<svg viewBox="0 0 320 180" role="img" aria-label="Watercolour of a lighthouse shining over the sea">${PAPER}
+    <g filter="url(#wc2)"><rect x="-10" y="-10" width="340" height="130" fill="#E9D3A9" opacity=".5"/>
+    <rect x="-10" y="128" width="340" height="60" fill="#9FB7BA" opacity=".6"/>
+    <path d="M168 54 L330 20 L330 80Z" fill="#F6D27A" opacity=".55"/></g>
+    <g filter="url(#wc)">
+      <path d="M118 150 C130 132 160 126 196 132 C214 136 222 146 226 156 H112Z" fill="#8C7A64" opacity=".7"/>
+      <path d="M150 132 L156 64 H176 L182 132Z" fill="#F7EEDC"/>
+      <path d="M152 112 h28 M154 90 h24" stroke="#B5544A" stroke-width="7" opacity=".55"/>
+      <rect x="154" y="48" width="24" height="16" fill="#F2B95C" opacity=".8"/>
+    </g>
+    <g ${L}><path d="M150 132 L156 64 H176 L182 132Z M154 64 v-16 h24 v16 M150 48 h32 l-16 -12z"/></g>
+  </svg>`
+};
+
+// Small sketch-and-wash motifs for each area card
+const W = c=>`<circle cx="32" cy="34" r="22" fill="${c}" opacity=".55" filter="url(#wc)"/>`;
+const S = `fill="none" stroke="#5A4130" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#sk)"`;
+const ICONS = {
+  A:`${W("#F2C36B")}<g ${S}><path d="M24 40 c0 -14 4 -20 8 -20 s8 6 8 20 z M20 40 h24 M32 20 v-4"/><circle cx="32" cy="44" r="2.5"/></g>`,           // a bell
+  B:`${W("#C9B98F")}<g ${S}><rect x="18" y="24" width="28" height="20" rx="2"/><path d="M18 26 l14 10 l14 -10"/></g>`,                               // a letter
+  C:`${W("#A9C0C3")}<g ${S}><path d="M30 52 V22 c0 -8 12 -8 12 0 c0 4 -4 6 -6 4"/></g>`,                                                             // a shepherd's crook
+  D:`${W("#9DB3B8")}<g ${S}><path d="M14 42 q18 -22 36 0 M14 42 h36 M22 42 v-8 M32 42 v-12 M42 42 v-8"/></g>`,                                    // a bridge
+  E:`${W("#EBC2B5")}<g ${S}><path d="M32 50 V32 M32 32 c-8 -2 -10 -10 -6 -14 c3 4 6 6 6 14 c0 -8 3 -10 6 -14 c4 4 2 12 -6 14 M32 42 c-6 0 -8 -4 -8 -6"/></g>`, // a lily
+  F:`${W("#D9C08C")}<g ${S}><path d="M16 36 q16 16 32 0 M18 38 q14 6 28 0"/><ellipse cx="27" cy="34" rx="4" ry="3"/><ellipse cx="36" cy="34" rx="4" ry="3"/></g>`, // a nest
+  G:`${W("#E8B07A")}<g ${S}><path d="M20 30 h22 v8 c0 6 -5 10 -11 10 s-11 -4 -11 -10 z M42 32 c6 0 6 6 0 6 M26 24 q2 -4 0 -7 M32 24 q2 -4 0 -7"/></g>`, // a cup
+  H:`${W("#B7C48E")}<g ${S}><path d="M32 52 V18 M32 22 h12 l4 4 l-4 4 h-12 M32 34 h-12 l-4 4 l4 4 h12"/></g>`,                                     // a signpost
+  I:`${W("#A5B97E")}<g ${S}><path d="M32 50 V32 M32 36 c-10 0 -12 -8 -12 -12 c8 0 12 4 12 12 M32 32 c0 -8 6 -12 12 -12 c0 6 -4 12 -12 12 M22 50 h20"/></g>`, // a seedling
+  J:`${W("#C7B88E")}<g ${S}><path d="M32 18 V48 M24 48 h16 M18 24 h28 M18 24 l-6 12 h12 z M46 24 l-6 12 h12 z"/></g>`                              // balance scales
+};
+function icon(a){ return `<svg class="motif" viewBox="0 0 64 64" aria-hidden="true">${ICONS[a]}</svg>`; }
+function scene(k){ return `<div class="scene">${SCENES[k]}</div>`; }
+
+document.body.insertAdjacentHTML("afterbegin", ARTDEFS);
 // ---------- Content ----------
 const ORDER = ["A","B","C","D","E","F","G","H","I","J"];
 const AREAS = {
@@ -662,6 +790,7 @@ function intro(msg){
   app.innerHTML = `
     ${msg?`<p class="toast" role="status">${esc(msg)}</p>`:""}
     <div class="card">
+      ${scene("hero")}
       <span class="eyebrow">A reflection</span>
       <h1>Free to Serve</h1>
       <p class="byline">A reflection on authority and community life, by Fr. Solomon Anthony Nirmalan, CMF</p>
@@ -705,6 +834,7 @@ function partIntro(p){
   app.innerHTML = `
     <div class="progress"><div class="step"><span class="tag">Part ${p===3?"Three":p===2?"Two":"One"}</span><span></span></div>${bar(info.pos)}</div>
     <div class="card">
+      ${scene("part"+p)}
       <span class="eyebrow">Part ${p===3?"Three":p===2?"Two":"One"}</span>
       <h1>${info.t}</h1>
       <p>${info.b}</p>
@@ -812,6 +942,7 @@ function result(){
 
   const crisisCard = R.crisis ? `
     <div class="card soft" role="alert">
+      ${scene("support")}
       <span class="pill gold">Before anything else</span>
       <h2>You do not have to carry this alone</h2>
       <p>${esc(SUPPORT_TEXT)}</p>
@@ -828,8 +959,8 @@ function result(){
   const flaggedCards = flagged.map(a=>{
     const X=AREAS[a], L=R.area[a].level;
     return `<div class="card">
-      <span class="pill${L==="strong"?"":" gold"}">${LEVEL_NAME[L]}</span>
-      <h2>${esc(X.name)}</h2>
+      <div class="chead">${icon(a)}<div class="field"><span class="pill${L==="strong"?"":" gold"}">${LEVEL_NAME[L]}</span>
+      <h2>${esc(X.name)}</h2></div></div>
       <p>${esc(X.warn)}</p>
       <h3>A question to sit with</h3>
       <p>${esc(X.reflect)}</p>
@@ -868,6 +999,7 @@ function result(){
   app.innerHTML = `
     ${crisisCard}
     <div class="card">
+      ${scene("result")}
       <span class="eyebrow">Your reflection</span>
       <h1>${esc(M.title)}</h1>
       <p>${esc(M.text)}</p>
@@ -883,6 +1015,7 @@ function result(){
     ${healthyCard}
     ${rightsCard}
     <div class="card">
+      ${R.crisis?"":scene("support")}
       <span class="eyebrow">Where to find support</span>
       <ul class="plain">${CONTACTS.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
     </div>
