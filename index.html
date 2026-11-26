@@ -786,6 +786,13 @@ const CONTACTS = [
   "A trusted person outside your line of authority",
   "National Mental Health Helpline: call or text 1926 (free, confidential, day and night), or WhatsApp 075 555 1926"
 ];
+const LEAVING = [
+  "Take time. Being safe now and leaving religious life are two different questions. The first may need action at once; the second deserves time and freedom from fear.",
+  "Ask a canon lawyer of your own choosing what Church law provides for you, such as recourse if excardination is refused (canon 270) and equity and charity from your institute if you leave (canon 702).",
+  "Do not depend on one letter. Ask formators, former superiors, professors and those you have served with to be willing to speak for you.",
+  "Ask for decisions and refusals in writing, and keep copies.",
+  "Keep your passport, degrees and certificates in your own hands, and build skills and friendships beyond the community."
+];
 const GENERAL_REFS = ["Ezekiel 34:1-16","Matthew 23:1-12","Psalm 34:18"];
 const LEVEL_NAME = {healthy:"Healthy signs",some:"Some warning signs",strong:"Strong warning signs"};
 
@@ -1034,6 +1041,10 @@ function result(){
       ${R.crisis?"":scene("support")}
       <span class="eyebrow">Where to find support</span>
       <ul class="plain">${CONTACTS.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+      <details>
+        <summary><b>If you are thinking of leaving or moving</b></summary>
+        <ul class="plain" style="margin-top:10px">${LEAVING.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+      </details>
     </div>
     ${scriptureCard}
     <div class="card" id="pdfcard">
@@ -1126,6 +1137,7 @@ function makePDF(R, password){
 
   if(R.overall==="strong"||flagged.length){ head("Knowing your rights"); RIGHTS.forEach(r=>bullet(r[0]+" "+r[1])); }
   head("Where to find support"); CONTACTS.forEach(c=>bullet(c));
+  if(R.overall==="strong"||(R.area.H.level&&R.area.H.level!=="healthy")){ head("If you are thinking of leaving or moving"); LEAVING.forEach(c=>bullet(c)); }
   head("Scripture for prayer (optional)");
   text(flagged.map(a=>AREAS[a].ref).concat(GENERAL_REFS).join("; "));
   y+=4;
